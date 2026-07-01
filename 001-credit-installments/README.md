@@ -55,6 +55,67 @@
 }
 ```
 
+### Success
+
+**Request:** `GET /credits/v1/wallet/cash-advances/options/3000`
+
+**Response**
+```json
+{
+    "result": {
+        "no_membership": {
+            "id": 525,
+            "start_date": "2026-08-01T00:00:00-03:00",
+            "principal_amount": 3000,
+            "plans": [
+                {
+                    "id": 1399621,
+                    "term_days": 31,
+                    "installments_quantity": 1,
+                    "payment_amount": 4569,
+                    "interest_rate": 5.0903232,
+                    "tfc": 6.1593,
+                    "due_date": "2026-08-01T00:00:00-03:00",
+                    "delivered_amount": 3000,
+                    "repayable_amount": 4569,
+                    "interest_amount": 1296.99,
+                    "tax_amount": 272.37,
+                    "insurance_amount": 0,
+                    "cashout_fee": 0,
+                    "cashin_fee": 0,
+                    "apr": 154.8827
+                }
+            ]
+        },
+        "membership": {
+            "id": 525,
+            "start_date": "2026-08-01T00:00:00-03:00",
+            "principal_amount": 3000,
+            "plans": [
+                {
+                    "id": 1399621,
+                    "term_days": 31,
+                    "installments_quantity": 1,
+                    "payment_amount": 4443,
+                    "interest_rate": 4.6803232,
+                    "tfc": 5.6632,
+                    "due_date": "2026-08-01T00:00:00-03:00",
+                    "delivered_amount": 3000,
+                    "repayable_amount": 4443,
+                    "interest_amount": 1192.52,
+                    "tax_amount": 250.43,
+                    "insurance_amount": 0,
+                    "cashout_fee": 0,
+                    "cashin_fee": 0,
+                    "apr": 110.3274
+                }
+            ]
+        }
+    }
+}
+```
+
+
 ## Invariantes
 
 - Para el tipo de producto billetera (`wallet`) solo se admiten los tipos de crédito (`loan_type`): adelantos (`cash-advances`) y adelantos tasa 0 (`free-interest-advances`). Cualquier otra combinación arroja un error de tipo `invalid_credit_product`.

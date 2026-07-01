@@ -5,6 +5,17 @@
 ## Diagrama de secuencia
 ![Diagrama](seq.png)
 
+1. Un usuario, autenticado en la billetera, realiza la consulta de cuotas para una línea de crédito por un monto proporcionado.
+2. El controlador delega la acción en el caso de uso Guessing Installments.
+3. Se valida la combinación producto + tipo de crédito, solicitada por el usuario.
+4. Se valida el monto mínimo para el tipo de crédito, solicitado por el usuario.
+5. Se busca una estructura crediticia que coincida con el monto, solicitado por el usuario.
+6. Se obtiene el balance crediticio del usuario.
+7. Se realiza una comprobación de scoring.
+8. Se verifica que la línea crediticia, asociada al balance del usuario, esté vigente.
+9. Se verifica que el usuario cuente con saldo disponible para el tipo de crédito que solicitó.
+10. Se crean las propuestas de crédito.
+
 ## Ejemplos
 
 ### Invalid credit product

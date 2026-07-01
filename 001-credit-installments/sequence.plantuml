@@ -8,6 +8,7 @@ entity "Credit\nStructure" as CS
 control "GetCredit\nBalance" as GCB
 
 
+
 activate User
 User->API: 1. GET /credits/v1/{product}/{loan_type}/options/{amount}
 activate API
@@ -35,15 +36,49 @@ end
 GI->CS: 5. Find credit option by {amount}
 activate CS
 CS-->GI: //credit option//
+deactivate CS
 opt credit option = null
     GI-->API: //No options//\n//for {amount}//
     API-->User: //No options//\n//for {amount}//
 end
 
-GI->GCB: 6. Get client credit capacity
+GI->GCB: 6. Get client credit balance
 activate GCB
-GCB-->GI: //capacity//
+create entity "Credit\nBalance" as CB
+GCB->CB: Create
+GCB-->GI: //balace//
 deactivate GCB
+
+GI->CB: 7. Get score
+activate CB
+CB-->GI: //score//
+deactivate CB
+
+opt score == 0
+    GI-->API: //No options//\n//for {amount}//
+    API-->User: //No options//\n//for {amount}//
+end
+
+GI->CB: 8. Is valid ?
+activate CB
+CB-->GI: //is valid//
+deactivate CB
+
+opt ! is valid
+    GI-->API: //No options//\n//for {amount}//
+    API-->User: //No options//\n//for {amount}//
+end
+
+GI->CB: 9. Get remaining amount
+activate CB
+CB-->GI: //remaining//
+deactivate CB
+
+opt remaining < amount
+    GI-->API: //No options//\n//for {amount}//
+    API-->User: //No options//\n//for {amount}//
+end
+
 
 
 

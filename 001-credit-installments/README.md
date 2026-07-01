@@ -60,6 +60,8 @@
 - Para el tipo de producto billetera (`wallet`) solo se admiten los tipos de crédito (`loan_type`): adelantos (`cash-advances`) y adelantos tasa 0 (`free-interest-advances`). Cualquier otra combinación arroja un error de tipo `invalid_credit_product`.
 - Todos los tipos de crédito (`loan_type`), tienen un monto mínimo establecido. En caso de que la solicitud de un cliente no supere dicho mínimo; un error de tipo `loan_option_invalid` es lanzado.
 - El monto solicitado debe coincidir con el campo `delivery_amount` de alguna estructura crediticia activa. En caso de que la solicitud de un cliente coincida; un error de tipo `loan_option_invalid` es lanzado.
+- El cliente debe tener un scoring crediticio > 0 y vigente. Caso contrario, retorna los siguientes mensajes de validación respectivamente: `bad_credit_score` y `nonexistent_expired_credit_line`, respectivamente.
+- El monto solicitado debe ser mayor a la capacidad remanente paara `loan_type`. Caso contrario, retorna un error de tipo `credit_line_quota_exceeded`.
 
 ## Detalles de implementación
 
@@ -79,6 +81,7 @@
     ```sql
     SELECT * FROM credit_structure cs WHERE cs.active  = 1 AND cs.country_id = 32 AND cs.currency_id = 3 AND cs.amount_delivery = ?;
     ```
+- Los pasos (7), (8) y (9) se encuentran implementados en `We\Domain\Wallets\Advances\WalletAdvancesValidator::performCreditLineQuotaValidation`.
 
 ## Dudas
 

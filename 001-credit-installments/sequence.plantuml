@@ -4,6 +4,8 @@ actor User
 boundary "Rest\nAPI" as API
 control "Guessing\nInstallments" as GI
 entity "Global\nSettings" as GB
+entity "Credit\nStructure" as CS
+control "GetCredit\nBalance" as GCB
 
 
 activate User
@@ -29,6 +31,19 @@ opt amount < minimum
     GI-->API: //Invalid {amount}//\n//for {loan_type}//
     API-->User: //Invalid {amount}//\n//for {loan_type}//
 end
+
+GI->CS: 5. Find credit option by {amount}
+activate CS
+CS-->GI: //credit option//
+opt credit option = null
+    GI-->API: //No options//\n//for {amount}//
+    API-->User: //No options//\n//for {amount}//
+end
+
+GI->GCB: 6. Get client credit capacity
+activate GCB
+GCB-->GI: //capacity//
+deactivate GCB
 
 
 

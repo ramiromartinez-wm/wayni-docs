@@ -111,6 +111,7 @@ El siguiente ejemplo describe la respuesta para un usuario con al menos una lín
     ```
 - Los pasos (3) a (7) son implementados en el método `buildBalance` de la clase `We\Domain\Credits\Lines\CreditLineSummaryBuilder`. A su vez, este método es invocado internamente por `build`.
     - El método `build` es invocado por `We\Services\Wallet\Advances\WalletAdvanceValidator::getCreditLineSummaryAndRenovate`. 
+- La acción que atiende las request es `We\Http\Controllers\CreditLineController::getSummary`.
 
 ## Invariantes
 

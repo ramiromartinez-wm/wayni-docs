@@ -1,0 +1,35 @@
+@startuml "Consulta de cuotas"
+
+actor User
+boundary "Rest\nAPI" as API
+control "Guessing\nInstallments" as GI
+entity "Global\nSettings" as GB
+
+
+activate User
+User->API: 1. GET /credits/v1/{product}/{loan_type}/options/{amount}
+activate API
+API->GI: 2. Guess installments
+activate GI
+GI->GI: 3. Validate {loan_type}\nfor {product}
+activate GI
+GI-->GI: //error//
+deactivate GI
+
+opt error
+    GI-->API: //Invalid {loan_type}//\n//for {product}//
+    API-->User: //Invalid {loan_type}//\n//for {product}//
+end
+
+GI->GB: 4. Get minimum amount for {loan_type}
+activate GB
+GB-->GI: //minimum//
+deactivate GB
+opt amount < minimum
+    GI-->API: //Invalid {amount}//\n//for {loan_type}//
+    API-->User: //Invalid {amount}//\n//for {loan_type}//
+end
+
+
+
+@enduml

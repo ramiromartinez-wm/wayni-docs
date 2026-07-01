@@ -55,8 +55,8 @@ CB-->GI: //score//
 deactivate CB
 
 opt score == 0
-    GI-->API: //No options//\n//for {amount}//
-    API-->User: //No options//\n//for {amount}//
+    GI-->API: //Bad credit score//
+    API-->User: //Invalid credit score//
 end
 
 GI->CB: 8. Is valid ?
@@ -65,8 +65,8 @@ CB-->GI: //is valid//
 deactivate CB
 
 opt ! is valid
-    GI-->API: //No options//\n//for {amount}//
-    API-->User: //No options//\n//for {amount}//
+    GI-->API: //Expired credit score//
+    API-->User: //Expired credit line//
 end
 
 GI->CB: 9. Get remaining amount
@@ -75,10 +75,20 @@ CB-->GI: //remaining//
 deactivate CB
 
 opt remaining < amount
-    GI-->API: //No options//\n//for {amount}//
-    API-->User: //No options//\n//for {amount}//
+    GI-->API: //Credit line quota exceeded//
+    API-->User: //Credit line quota exceeded//
 end
 
+GI->GI: 10. Build proposal
+activate GI
+GI-->GI: //proposal//
+deactivate GI
+
+GI-->API: //proposal//
+deactivate GI
+
+API-->User: //proposal//
+deactivate API
 
 
 

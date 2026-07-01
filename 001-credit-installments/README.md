@@ -143,6 +143,7 @@
     SELECT * FROM credit_structure cs WHERE cs.active  = 1 AND cs.country_id = 32 AND cs.currency_id = 3 AND cs.amount_delivery = ?;
     ```
 - Los pasos (7), (8) y (9) se encuentran implementados en `We\Domain\Wallets\Advances\WalletAdvancesValidator::performCreditLineQuotaValidation`.
+- El paso (10) se resuelve en la implementación `We\Services\Loans\LoanOptionService::getCurrentByClient`.
 
 ## Dudas
 

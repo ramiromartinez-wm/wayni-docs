@@ -1,0 +1,63 @@
+@startuml "Get credit lines summary"
+
+actor User
+boundary "Rest\nAPI" as API
+control "GetCredit\nBalance" as GCB
+entity "Rating\nHistory" as RH
+entity "Loans\nGranted" as LG
+entity "Credit\nBalance" as CB
+
+activate User
+User->API: 1. GET /{product}/lines/summary
+activate API
+
+API->GCB: 2. Get credit line summary
+activate GCB
+GCB->RH: 3. Find credit line for {product}
+activate RH
+RH-->GCB: //credit line//
+deactivate
+
+opt credit line is empty
+    note over GCB
+    Se genera un historia crediticia.
+    Investigar cómo lo hace.
+    end note
+end
+
+GCB->LG: 4. Get credits not cancelled in period
+activate LG
+LG-->GCB: //credits//
+deactivate LG
+
+alt product = wallet
+    GCB->GCB: 5.1. Sumarize cash advance types
+    activate GCB
+    GCB-->GCB: //cash advace allocated amount//
+    deactivate GCB
+
+    GCB->GCB: 5.2. Sumarize interest free advance types
+    activate GCB
+    GCB-->GCB: //cash interest free advance allocated amount//
+    deactivate GCB
+else product = loan
+    note over GCB
+    Implementar:
+    6.1. Sumarize personal-loan advance types ...
+    6.2. Sumarize refinanced-loan advance types ...
+    end note
+end
+
+GCB->CB: 7. Create with credit lines balances
+activate CB
+CB-->GCB: //summary//
+deactivate CB
+
+GCB-->API: //summary//
+deactivate GCB
+
+API-->User: //summary//
+deactivate API
+
+
+@enduml

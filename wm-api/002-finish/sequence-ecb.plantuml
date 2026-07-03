@@ -1,0 +1,141 @@
+@startuml "Loan request"
+
+actor Customer
+boundary "Rest\nAPI" as API
+control "Loan\nRequest" as LR
+
+box #BBDEFB
+    control "Check\nRenewal" as CR
+    entity "Loans\nRepository" as LRP
+    boundary "OTP\nValidator" as OTP
+end box
+
+box 
+    control "Check\nBankAccount" as CBA
+    entity "BankAccount\nRepository" as BAR
+end box
+
+box 
+    control "Check\nDebitCard" as CDC
+    entity "BankCard\nRepository" as BCR
+end box
+
+box 
+    control "Check\nBiometicData" as CBD
+    entity "UserInfo\nRepository" as UIR
+end box
+
+
+
+activate Customer
+Customer -> API : 1. Request a new loan
+activate API
+API -> LR: 2. Perform a new loan
+activate LR
+LR -> CR: 3. Check if renewal customer
+activate CR
+CR -> LRP: Count finished loans
+activate LRP
+LRP --> CR: //finished loans//
+deactivate LRP
+
+opt#FFE082 #FFF8E1 finished loans > 0
+    CR -> OTP: Check verfication code
+    activate OTP
+    OTP --> CR: // verification result //
+    deactivate OTP
+end
+
+CR-->LR: //check//
+deactivate CR
+
+opt check not true
+    LR-->API: //failure//
+    API-->Customer: //failure//
+end
+
+LR->CBA: 4. Check bank account
+activate CBA
+
+alt#FFE082 #FFF8E1 is wayni account
+    CBA->BAR: Find or create account.
+    activate BAR
+    BAR-->CBA: //account//
+    deactivate BAR
+else
+    CBA->BAR: Find account.
+    activate BAR
+    BAR-->CBA: //account//
+    deactivate BAR
+end
+
+CBA->CBA: Validate
+activate CBA
+note over CBA
+Account exists &
+is approved
+end note
+CBA-->CBA: //result//
+deactivate CBA
+
+CBA-->LR: //check//
+deactivate CBA
+
+opt check not true
+LR-->API: //Invalid bank account//
+API-->Customer:  //Invalid bank account//
+end
+
+''
+LR->CDC: 5. Check debit card
+activate CDC
+
+
+CDC->BCR: Find debit card
+activate BCR
+BCR-->CDC: //card//
+deactivate BCR
+
+CDC->CDC: Validate
+activate CDC
+note over CDC
+Card exists &
+is approved
+end note
+CDC-->CDC: //result//
+deactivate CDC
+CDC-->LR: //check//
+deactivate CDC
+
+opt check not true
+LR-->API: //Invalid debit card //
+API-->Customer:  //Invalid debit card//
+end
+
+
+LR->CBD: 6. Check biometric information
+activate CBD
+CBD->UIR: Find user information
+activate UIR
+UIR-->CBD: //information//
+deactivate UIR
+CBD->CBD: Validate
+activate CBD
+note over CBD
+Front document approved or
+biometric option = true
+end note
+CBD-->CBD: //result//
+deactivate CBD
+CBD-->LR: //check//
+deactivate CBD
+
+opt check not true
+LR-->API: //Biometric validatio fail //
+API-->Customer:  //Biometric validatio fail//
+end
+
+
+
+
+@enduml

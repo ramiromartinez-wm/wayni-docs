@@ -1,0 +1,93 @@
+@startuml "Credits flow - App"
+
+actor User
+participant "App\nMobile" as AM
+participant "Me\nService" as MS
+participant "Wm\nApi" as WM
+participant "Gateway\nCore" as GC
+participant "Auth\nService" as AU
+
+
+activate User
+User->AM: 1. Click credit button
+activate AM
+'' GET /me/api/v2/me/credits ''
+AM->MS: 2. Get credit lines
+activate MS
+'' GET /credits/v1/wallet/lines/summaries ''
+MS->WM: 3. Get wallet credit lines
+activate WM
+WM-->MS: //wallet credit lines//
+deactivate WM
+'' GET /credits/v1/loans/lines/summaries ''
+MS->WM: 4. Get loans credit lines
+activate WM
+WM-->MS: //loans credit lines//
+deactivate WM
+MS->MS: 5. Collect credit lines
+activate MS
+MS-->MS: //credit lines//
+deactivate MS
+MS-->AM: //credit lines//
+deactivate MS
+AM-->User: 6. Show credit lines screen
+User->AM: 7. Select //{amount}// & //{credit line}}//
+AM->WM: 8. Guessing installments for\n//{amount}// & //{credit line}//
+activate WM
+WM-->AM: //installments//
+deactivate WM
+AM->User: 9. Show installment options
+User->AM: 10. Select an //{{installment option}}//
+AM->MS: 11. Get debit card for user
+activate MS
+MS->WM: 12. Get debit card for user
+activate WM
+WM-->MS: //debit card//
+deactivate WM
+MS-->AM: //debit card//
+deactivate MS
+alt debit card found
+AM-->User: 13. Show debit card details
+else
+AM-->User: 13.1. Request a debit card
+note over User, AM: Documentar flujo
+end
+deactivate AM
+User->AM: 14. Accept payment method
+activate AM
+AM->MS: 15. Get Wayni account
+activate MS
+MS->GC: 16. Get user CVU
+activate GC
+GC-->MS: //cvu//
+deactivate GC
+MS-->AM: //cvu//
+deactivate MS
+AM-->User: 17. Show confirmation screen
+User->AM: 18. Confirm
+alt biometric enable
+note over AM: Documentar flujo
+else
+AM->MS: 19.2. Send OTP
+activate MS
+MS->AU: 19.3. Send OTP
+activate AU
+AU-->MS:
+deactivate AU
+MS-->AM:
+deactivate MS
+AM-->User: 19.4. Show OTP screen
+User->AM: 19.5. Insert OTP code
+end
+AM->MS: 20. Loan create attempt
+activate MS
+MS->WM: 21. Create loan
+activate WM
+WM-->MS: //loan//
+deactivate WM
+MS->AM: //loan//
+deactivate MS
+AM->User: 22. Show status & details
+deactivate AM
+
+@enduml

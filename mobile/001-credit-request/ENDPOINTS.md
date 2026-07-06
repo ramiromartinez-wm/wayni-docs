@@ -78,7 +78,7 @@ POST /me/api/v1/me/loan/card/validate
 POST /me/api/v1/me/loan/terms/ADELANTO
 POST /me/api/v3/me/loan/attempt
 POST /me/api/v1/me/security/send-otp
-GET  /credits/v1/wallet/cash-advances/options/{amount}
+GET  /credits/v1/wallet/personal-loan/options/{amount}
 GET  /credits/v1/wallet/interest-free-advances/options/{amount}
 GET  /term/api/v1/CASH-ADVANCE?show_body=1
 POST /api/v1/subscribers

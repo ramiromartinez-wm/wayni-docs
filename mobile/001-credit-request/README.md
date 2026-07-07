@@ -10,8 +10,9 @@
 | App Mobile | AM | Frontend | Aplicación móvil que expone la interfaz de usuario del flujo de solicitud de crédito. |
 | Me Service | MS | ? | Servicio backend que orquesta el flujo de crédito (líneas, tarjetas, cuenta, OTP) actuando como fachada hacia los demás servicios. |
 | Wm Api | WM | Prestamos | Servicio que gestiona las líneas de crédito, opciones de cuotas, tarjetas de débito y la creación de préstamos. |
-| Gateway Core | Billetera | Por definir | Servicio core que provee datos de la cuenta del usuario, como el CVU de la cuenta Wayni. |
-| Auth Service | Billetera | Por definir | Servicio encargado del envío y validación del código OTP para la confirmación del usuario. |
+| Bank Service | GC | Billetera | Servicio core que provee datos de la cuenta del usuario, como el CVU de la cuenta Wayni. |
+| Auth Service | AS | Billetera | Servicio encargado del envío y validación del código OTP para la confirmación del usuario. |
+| Payway Ingenico | PI | Por definir | Servicio externo que procesa las solicitudes de autorización y anulación sobre la tarjeta de débito. |
 
 ### Diagrama de secuencia
 ![Diagrama](sequence.png)
@@ -75,12 +76,14 @@ Tras aceptar el método de pago, la aplicación pide a `Me Service` validar la t
 
 | Paso | Servicio | Método | Endpoint |
 | --- | --- | --- | --- |
+| 1 | Me Service | POST | /me/api/v1/me/loan/card/validate |
+| 2 | Wm Api | POST | /v3/card-validate |
 
 **💡 Oportunidades de mejora**
 
 | N° | Mejora | Criticidad |
 | --- | --- | --- |
-| 1 | Reemplazar la autorización por la pre autorización, con la finalidad de evitar el flujo de anulación. | 🟡 Media |
+| 1 | Reemplazar la autorización por la pre autorización, con la finalidad de evitar el flujo de reversa subsiguiente. | 🟡 Media |
 
 #### 5. Obtener cuenta Wayni (CVU)
 La aplicación solicita a `Me Service` la cuenta Wayni del usuario. `Me Service` consulta el CVU correspondiente a `Gateway Core` y lo retorna a la aplicación para mostrar la pantalla de confirmación.
@@ -89,6 +92,8 @@ La aplicación solicita a `Me Service` la cuenta Wayni del usuario. `Me Service`
 
 | Paso | Servicio | Método | Endpoint |
 | --- | --- | --- | --- |
+| 1 | Me Service | GET | /me/api/v1/me |
+| 2 | Bank Service | GET | /api/v1/banks/me?status=ACTIVE,PENDING |
 
 **💡 Oportunidades de mejora**
 
@@ -115,9 +120,17 @@ Finalmente, la aplicación solicita a `Me Service` intentar la creación del pr�
 
 | Paso | Servicio | Método | Endpoint |
 | --- | --- | --- | --- |
+| 1 | Me Service | POST | /me/api/v3/me/loan/attempt |
+| 2 | Wm API | POST | 
 
 **💡 Oportunidades de mejora**
 
 | N° | Mejora | Criticidad |
 | --- | --- | --- |
 
+
+### Mensajes no documentados
+
+- Términos y condiciones
+- Subscripcion
+- Crear y validar tarjetas al momento de su alta en la aplicación.

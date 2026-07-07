@@ -6,8 +6,9 @@ actor User
 participant "App\nMobile" as AM
 participant "Me\nService" as MS
 participant "Wm\nApi" as WM
-participant "Gateway\nCore" as GC
+participant "Bank\nService" as GC
 participant "Auth\nService" as AU
+participant "Payway\nIngenico" as PI
 
 
 activate User
@@ -55,6 +56,14 @@ AM->MS: Validate debit card
 activate MS
 MS->WM: Validate debit card
 activate WM
+WM->PI: Make an authorization request
+activate PI
+PI-->WM: //authorization response//
+deactivate PI
+WM->PI: Make refund request
+activate PI
+PI-->WM: //refund response//
+deactivate PI
 WM-->MS:
 deactivate WM
 MS-->AM:
@@ -67,7 +76,7 @@ GC-->MS: //cvu//
 deactivate GC
 MS-->AM: //cvu//
 deactivate MS
-AM-->User: Show confirmation screen
+AM->User: Show confirmation screen
 User->AM: Confirm
 alt biometric enable
 note over AM: Documentar flujo

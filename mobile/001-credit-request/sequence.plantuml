@@ -1,0 +1,106 @@
+@startuml "Credits flow - App"
+
+autonumber
+
+actor User
+participant "App\nMobile" as AM
+participant "Me\nService" as MS
+participant "Wm\nApi" as WM
+participant "Bank\nService" as GC
+participant "Auth\nService" as AU
+participant "Payway\nIngenico" as PI
+
+
+activate User
+User->AM: Click credit button
+activate AM
+'' GET /me/api/v2/me/credits ''
+AM->MS: Get credit lines
+activate MS
+'' GET /credits/v1/wallet/lines/summaries ''
+MS->WM: Get wallet credit lines
+activate WM
+WM-->MS: //wallet credit lines//
+deactivate WM
+'' GET /credits/v1/loans/lines/summaries ''
+MS->WM: Get loans credit lines
+activate WM
+WM-->MS: //loans credit lines//
+deactivate WM
+MS-->AM: //credit lines//
+deactivate MS
+AM-->User: Show credit lines screen
+User->AM: Select //{amount}// & //{credit line}}//
+AM->WM:  Guessing installments for\n//{amount}// & //{credit line}//
+activate WM
+WM-->AM: //installments//
+deactivate WM
+AM->User: Show installment options
+User->AM: Select an //{{installment option}}//
+AM->MS: Get debit card for user
+activate MS
+MS->WM: Get debit card for user
+activate WM
+WM-->MS: //debit card//
+deactivate WM
+MS-->AM: //debit card//
+deactivate MS
+alt debit card found
+AM->User: Show debit card details
+else
+AM->User: Request a debit card
+note over User, AM: Documentar flujo
+end
+User->AM: Accept payment method
+AM->MS: Validate debit card
+activate MS
+MS->WM: Validate debit card
+activate WM
+WM->PI: Make an authorization request
+activate PI
+PI-->WM: //authorization response//
+deactivate PI
+WM->PI: Make refund request
+activate PI
+PI-->WM: //refund response//
+deactivate PI
+WM-->MS:
+deactivate WM
+MS-->AM:
+deactivate MS
+AM->MS: Get Wayni account
+activate MS
+MS->GC: Get user CVU
+activate GC
+GC-->MS: //cvu//
+deactivate GC
+MS-->AM: //cvu//
+deactivate MS
+AM->User: Show confirmation screen
+User->AM: Confirm
+alt biometric enable
+note over AM: Documentar flujo
+else
+AM->MS: Send OTP
+activate MS
+MS->AU: Send OTP
+activate AU
+AU-->MS:
+deactivate AU
+MS-->AM:
+deactivate MS
+AM->User: Show OTP screen
+User->AM: Insert OTP code
+end
+AM->MS: Loan create attempt
+activate MS
+MS->WM: Create loan
+activate WM
+WM-->MS: //loan//
+deactivate WM
+MS-->AM: //loan//
+deactivate MS
+AM->User: Show status & details
+deactivate AM
+
+@enduml

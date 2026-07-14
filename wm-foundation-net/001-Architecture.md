@@ -22,6 +22,8 @@ Se requiere definir el diseño arquitectónico de una librería .NET Core que ac
 
 Tras descartar el patrón de Puertos y Adaptadores (*Ports & Adapters*) como arquitectura global del *framework*, se optó por un diseño orientado a módulos compuestos mediante Inyección de Dependencias (DI). Bajo este enfoque, cada módulo constituye un paquete independiente que se registra en el contenedor de dependencias del *Composition Root* (la aplicación consumidora) a través de métodos de extensión (*extension methods*), alineándose con la filosofía de diseño de `Microsoft.Extensions.*` en .NET.
 
+### Estructura del framework
+
 A continuación, se detalla el *scaffolding* propuesto para el *framework*. Esta organización física refleja la separación lógica de responsabilidades: el núcleo compartido (`Core`) actúa como un *Shared Kernel* que expone únicamente abstracciones y contratos comunes, mientras que cada módulo funcional o técnico (como `Foo` o `Baz`) se mantiene aislado y autocontenido. Cada módulo expone su configuración de inyección de dependencias dentro del directorio `DependencyInjection`, encapsulando allí los métodos de extensión necesarios para que la aplicación consumidora los registre de forma selectiva y sencilla.
 
 ```text
@@ -34,6 +36,8 @@ Wayni
     └── Baz (module)
         └── DependencyInjection (module configuration)
 ```
+
+### Principios
 
 A partir de la estructura propuesta, se establecen las siguientes directrices de diseño que deben respetarse estrictamente al desarrollar componentes:
 
